@@ -1,0 +1,23 @@
+# Local environment & secrets
+.env
+.env.local
+.env.*.local
+*.private.key
+esp32/config.h
+
+# Dependencies & build artifacts
+node_modules/
+.vercel
+dist/
+build/
+
+# Operating system metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor caches
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
