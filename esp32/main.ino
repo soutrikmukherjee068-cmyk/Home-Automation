@@ -18,14 +18,59 @@
  * ============================================================================
  */
 
+#include <Arduino.h>
 #include <WiFi.h>
+
+// Configuration header resolution with automatic fallback
 #if __has_include("config.h")
-#include "config.h"
-#else
-#include "config.example.h"
+  #include "config.h"
+#elif __has_include("config.example.h")
+  #include "config.example.h"
 #endif
 
-// Note: In Phase 2, install "Firebase-ESP-Client" by Mobizt via Arduino Library Manager
+// --- Fallback Definitions (guarantees error-free compilation) ---
+#ifndef WIFI_SSID
+  #define WIFI_SSID           "YOUR_WIFI_SSID_HERE"
+#endif
+#ifndef WIFI_PASSWORD
+  #define WIFI_PASSWORD       "YOUR_WIFI_PASSWORD_HERE"
+#endif
+#ifndef FIREBASE_HOST
+  #define FIREBASE_HOST       "your-project-id-default-rtdb.firebaseio.com"
+#endif
+#ifndef FIREBASE_AUTH_KEY
+  #define FIREBASE_AUTH_KEY   "YOUR_FIREBASE_DATABASE_SECRET_OR_WEB_API_KEY"
+#endif
+
+// Pin Fallbacks (NodeMCU-32S Pinout)
+#ifndef RELAY_1_PIN
+  #define RELAY_1_PIN         23  // Channel 1: Living Room Light
+#endif
+#ifndef RELAY_2_PIN
+  #define RELAY_2_PIN         22  // Channel 2: Bedroom Light
+#endif
+#ifndef RELAY_3_PIN
+  #define RELAY_3_PIN         21  // Channel 3: Kitchen Light
+#endif
+#ifndef RELAY_4_PIN
+  #define RELAY_4_PIN         19  // Channel 4: Bathroom Light
+#endif
+#ifndef DHT_PIN
+  #define DHT_PIN             4   // DHT11 / DS18B20 Sensor Data Pin
+#endif
+#ifndef STATUS_LED_PIN
+  #define STATUS_LED_PIN      2   // Built-in Blue Status LED
+#endif
+
+// Timing Fallbacks (milliseconds)
+#ifndef TELEMETRY_INTERVAL
+  #define TELEMETRY_INTERVAL  5000  // 5 seconds
+#endif
+#ifndef WIFI_RETRY_INTERVAL
+  #define WIFI_RETRY_INTERVAL 10000 // 10 seconds
+#endif
+
+// Note: In Phase 2, install "Firebase-ESP-Client" by Mobizt and "DHT sensor library" by Adafruit
 // #include <Firebase_ESP_Client.h>
 // #include <addons/TokenHelper.h>
 // #include <addons/RTDBHelper.h>
@@ -53,6 +98,13 @@ unsigned long lastTelemetryMillis = 0;
 unsigned long lastHeartbeatMillis = 0;
 unsigned long lastWifiCheckMillis = 0;
 
+// --- Function Declarations (prevents undeclared symbol errors) ---
+void connectWiFi();
+void initFirebase();
+void setRelayState(int index, bool turnOn);
+void readAndPublishTemperature();
+void publishHeartbeat();
+
 /**
  * Hardware Setup Routine
  */
@@ -64,10 +116,10 @@ void setup() {
   Serial.println("=======================================================");
 
   // 1. Initialize 4 Relay Pins safely to OFF state before setting OUTPUT
+  // Setting digitalWrite before pinMode prevents momentary bootup relay click
   for (int i = 0; i < 4; i++) {
-    // For Active LOW relays, HIGH = Relay OFF
-    pinMode(relays[i].pin, OUTPUT);
     digitalWrite(relays[i].pin, relays[i].activeLow ? HIGH : LOW);
+    pinMode(relays[i].pin, OUTPUT);
     relays[i].currentState = false;
     Serial.printf("[Relay Init] Channel %d: %s on GPIO %d -> OFF (Safe)\n", 
                   i + 1, relays[i].name, relays[i].pin);
@@ -99,7 +151,8 @@ void loop() {
     if (WiFi.status() != WL_CONNECTED) {
       Serial.println("[Wi-Fi Watchdog] Connection lost. Reconnecting...");
       digitalWrite(STATUS_LED_PIN, LOW);
-      WiFi.reconnect();
+      WiFi.disconnect();
+      WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     } else {
       digitalWrite(STATUS_LED_PIN, HIGH); // Steady status LED when online
     }
