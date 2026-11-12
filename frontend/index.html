@@ -5,18 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="College Prototype: 4-Light and Temperature Smart Home Automation Dashboard">
   <title>HOME — Smart Home Control</title>
-  
-  <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-  
-  <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
-  
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
-  <!-- Header -->
   <header class="site-header" role="banner">
     <div class="header-inner container">
       <div class="brand">
@@ -31,43 +24,33 @@
           <span class="brand-subtitle">SMART HOME CONTROL</span>
         </div>
       </div>
-
       <div class="header-center">
         <div class="status-indicator demo-pill" title="System running in simulated demo mode">
           <span class="status-dot"></span>
           <span class="status-text">DEMO MODE</span>
         </div>
       </div>
-
       <div class="header-controls">
         <div class="datetime-display" id="datetimeDisplay" aria-label="Current date and time">
           <span class="time" id="currentTime">--:--</span>
           <span class="date" id="currentDate">---, -- ---</span>
         </div>
-        
         <button id="themeToggleBtn" class="icon-btn" aria-label="Toggle light or dark theme" title="Toggle Theme">
           <i data-lucide="moon" id="themeIcon"></i>
         </button>
-
         <button id="settingsToggleBtn" class="icon-btn" aria-label="Open settings panel" title="Settings">
           <i data-lucide="settings"></i>
         </button>
       </div>
     </div>
   </header>
-
-  <!-- Main Container -->
   <main class="main-content container" role="main">
-    
-    <!-- Hero / Overview Section -->
     <section class="overview-section" aria-labelledby="overviewHeading">
       <div class="greeting-box">
         <span class="greeting-pre" id="greetingText">Good Day</span>
         <h2 id="overviewHeading" class="greeting-title">Your Home</h2>
         <p class="greeting-subtitle">Simple control. Smarter living.</p>
       </div>
-
-      <!-- 3 Summary Statistics: Total Lights, Active Lights, Room Temperature -->
       <div class="stats-grid" role="region" aria-label="Dashboard Statistics">
         <div class="stat-card">
           <div class="stat-header">
@@ -76,7 +59,6 @@
           </div>
           <span class="stat-value" id="statTotalLights">4</span>
         </div>
-
         <div class="stat-card">
           <div class="stat-header">
             <span class="stat-label">Active Lights</span>
@@ -84,7 +66,6 @@
           </div>
           <span class="stat-value stat-val-on" id="statActiveLights">0</span>
         </div>
-
         <div class="stat-card">
           <div class="stat-header">
             <span class="stat-label">Room Temperature</span>
@@ -94,11 +75,7 @@
         </div>
       </div>
     </section>
-
-    <!-- Core Layout Grid: 4 Light Controls + Sidebar (Temp, ESP32, Activity) -->
     <div class="dashboard-layout">
-      
-      <!-- Primary Column: 4 Light Controls -->
       <section class="devices-section" aria-labelledby="devicesSectionTitle">
         <div class="section-header">
           <div>
@@ -107,16 +84,10 @@
           </div>
           <span class="device-count-badge" id="visibleDeviceCount">4 Lights</span>
         </div>
-
         <div class="device-grid" id="deviceGrid" role="region" aria-live="polite">
-          <!-- Populated dynamically by script.js: Living Room, Bedroom, Kitchen, Bathroom -->
         </div>
       </section>
-
-      <!-- Secondary Column: Temperature, ESP32 Controller & Activity Log -->
       <aside class="sidebar-section" aria-label="Environmental telemetry and hardware status">
-        
-        <!-- Dedicated Temperature Monitoring Card -->
         <div class="panel-card temp-monitor-card">
           <div class="panel-header">
             <div class="panel-title-wrap">
@@ -125,7 +96,6 @@
             </div>
             <span class="badge-tag">DEMO DATA</span>
           </div>
-
           <div class="temp-display-wrap">
             <div class="temp-hero">
               <span class="temp-big-value" id="sensorTemp">28.5°C</span>
@@ -142,14 +112,11 @@
               </div>
             </div>
           </div>
-
           <div class="sensor-footer">
             <span class="live-pulse"></span>
             <span class="sensor-last-updated" id="sensorLastUpdated">Simulated updates active</span>
           </div>
         </div>
-
-        <!-- ESP32 Controller Section -->
         <div class="panel-card controller-card">
           <div class="panel-header">
             <div class="panel-title-wrap">
@@ -158,7 +125,6 @@
             </div>
             <span class="badge-tag" id="esp32Badge">DEMO MODE</span>
           </div>
-
           <div class="controller-info-grid">
             <div class="info-row">
               <span class="info-key">Controller</span>
@@ -182,8 +148,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Activity History Card -->
         <div class="panel-card history-card">
           <div class="panel-header">
             <div class="panel-title-wrap">
@@ -194,17 +158,12 @@
               Clear
             </button>
           </div>
-
           <ul class="activity-feed" id="activityFeed" aria-live="polite">
-            <!-- Feed entries dynamically populated -->
           </ul>
         </div>
-
       </aside>
     </div>
   </main>
-
-  <!-- Settings Modal -->
   <div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle" hidden>
     <div class="modal-box">
       <div class="modal-header">
@@ -213,7 +172,6 @@
           <i data-lucide="x"></i>
         </button>
       </div>
-
       <div class="modal-body">
         <div class="setting-group">
           <label class="setting-label">Interface Theme</label>
@@ -226,7 +184,6 @@
             </button>
           </div>
         </div>
-
         <div class="setting-group">
           <label class="setting-label">Prototype Scope & Diagnostics</label>
           <div class="info-card">
@@ -248,7 +205,6 @@
             </div>
           </div>
         </div>
-
         <div class="setting-group">
           <label class="setting-label">Data Management</label>
           <div class="data-actions">
@@ -261,25 +217,18 @@
           </div>
         </div>
       </div>
-
       <div class="modal-footer">
         <button id="doneSettingsBtn" class="btn btn-primary">Done</button>
       </div>
     </div>
   </div>
-
-  <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
-
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="container footer-content">
       <span>HOME Smart Automation • Polytechnic Prototype</span>
       <span>4 Lights • 1 Temperature Sensor • ESP32 Ready</span>
     </div>
   </footer>
-
-  <!-- Vanilla Scripts -->
   <script src="script.js"></script>
 </body>
 </html>
